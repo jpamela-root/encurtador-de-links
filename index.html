@@ -1,35 +1,22 @@
-<a!DOCTYPE html>
-<html>
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
-<link rel="stylesheet" href="css/main.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encurtador de Links</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-
-<div class="container">
-  <form action="build.php" method="post">
-  <div class="row">
-    <div class="col-25"> 
-      <label for="fname">LInk grande</label>
+    <div class="container">
+        <h1>Encurtador de Links</h1>
+        <form action="encurtador.php" method="post">
+            <label for="link">Link Original:</label><br>
+            <input type="url" id="link" name="link" required><br><br>
+            <label for="short">Link Encurtado:</label><br>
+            <input type="url" id="short" name="short" required><br><br>
+            <input type="submit" value="Encurtar">
+        </form>
     </div>
-    <div class="col-75">
-      <input type="text" id="fname" name="link" >
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-25">
-      <label for="lname">Short link</label>
-    </div>
-    <div class="col-75">
-      <input type="text" id="lname" name="short" >
-    </div>
-  </div>
-
-  <div class="row">
-    <input type="submit" value="Submit">
-  </div>
-  </form>
-</div>
-
 </body>
 </html>
 
