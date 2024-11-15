@@ -1,30 +1,32 @@
 <?php
-declare(strict_types=1);
+require 'vendor/autoload.php'; // Autoload do Composer para o MongoDB Driver
 
 function generateShortCode(): string {
     return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
 }
 
-function storeLink(string $originalUrl): string {
-    $pdo = new PDO('mysql:host=localhost;dbname=shortener', 'root', 'password');
-    $shortCode = generateShortCode();
+function getMongoClient() {
+    return (new MongoDB\Client("mongodb://localhost:27017"))->shortener->links;
+}
 
-    $stmt = $pdo->prepare("INSERT INTO links (original_url, short_code) VALUES (:original_url, :short_code)");
-    $stmt->execute([
-        ':original_url' => $originalUrl,
-        ':short_code' => $shortCode,
+function storeLink(string $originalUrl): string {
+    $collection = getMongoClient();
+
+    $shortCode = generateShortCode();
+    $collection->insertOne([
+        'original_url' => $originalUrl,
+        'short_code' => $shortCode,
+        'created_at' => new MongoDB\BSON\UTCDateTime(),
     ]);
 
     return $shortCode;
 }
 
 function getOriginalUrl(string $shortCode): ?string {
-    $pdo = new PDO('mysql:host=localhost;dbname=shortener', 'root', 'password');
+    $collection = getMongoClient();
+    $document = $collection->findOne(['short_code' => $shortCode]);
 
-    $stmt = $pdo->prepare("SELECT original_url FROM links WHERE short_code = :short_code");
-    $stmt->execute([':short_code' => $shortCode]);
-
-    return $stmt->fetchColumn() ?: null;
+    return $document['original_url'] ?? null;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -52,5 +54,3 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['code'])) {
     }
 }
 ?>
-
-
