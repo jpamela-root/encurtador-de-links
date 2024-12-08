@@ -5,8 +5,9 @@ function generateShortCode(): string {
     return substr(str_shuffle('abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'), 0, 6);
 }
 
-function getMongoClient() {
-    return (new MongoDB\Client("mongodb://localhost:27017"))->shortener->links;
+function getMongoClient(): MongoDB\Collection {
+    $client = new MongoDB\Client("mongodb://localhost:27017");
+    return $client->selectDatabase("shortener")->selectCollection("links");
 }
 
 function storeLink(string $originalUrl): string {
@@ -53,4 +54,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['code'])) {
         echo "Link not found";
     }
 }
-?>
+
